@@ -1,0 +1,25 @@
+syntax = "proto3";
+import "google/api/annotations.proto";
+option csharp_namespace = "Products";
+
+package products;
+
+service ProductServices {
+  rpc GetProductDetails (ProductDetailsRequest) returns (ProductDetailsReply) {
+    option (google.api.http) = {
+      get: "/v1/product/details/{partNumber}"
+    };
+  }
+}
+
+message Product {
+  int32 partNumber = 1;
+}
+
+message ProductDetailsRequest {
+  int32 partNumber = 1;
+}
+
+message ProductDetailsReply {
+   Product partInfo = 1;
+}

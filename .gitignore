@@ -1,0 +1,3 @@
+test/generated/*.json
+node_modules
+dist

@@ -1,0 +1,40 @@
+{
+  "name": "@accility/protoc-swagger-plugin",
+  "version": "0.9.0",
+  "description": "Convert .proto files to OpenAPI v2 (swagger) files.",
+  "keywords": [
+    "protoc",
+    "protobuffer",
+    "REST",
+    "plugin",
+    "swagger",
+    "openapi",
+    "convert"
+  ],
+  "author": "Accility AB",
+  "license": "MIT",
+  "public": true,
+  "repository": {
+    "url": "https://github.com/accility/protoc-swagger-plugin.git"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "main": "./dist/lib/protoc-gen-swagger.js",
+  "types": "./dist/lib/protoc-gen-swagger.d.ts",
+  "bin": {
+    "protoc": "./dist/bin/protoc-gen-swagger-cli.js"
+  },
+  "scripts": {
+    "build": "npx tsc",
+    "test": "node test/simpleProductApi.js"
+  },
+  "dependencies": {
+    "@accility/protoc-tools": "^0.9.1",
+    "google-proto-files": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^13.9.8",
+    "typescript": "^3.8.3"
+  }
+}
