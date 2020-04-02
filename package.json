@@ -1,6 +1,6 @@
 {
   "name": "@accility/protoc-swagger-plugin",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Convert .proto files to OpenAPI v2 (swagger) files.",
   "keywords": [
     "protoc",
