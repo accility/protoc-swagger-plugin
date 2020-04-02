@@ -22,9 +22,6 @@
   },
   "main": "./dist/lib/protoc-gen-swagger.js",
   "types": "./dist/lib/protoc-gen-swagger.d.ts",
-  "bin": {
-    "protoc": "./dist/bin/protoc-gen-swagger-cli.js"
-  },
   "scripts": {
     "build": "npx tsc",
     "test": "node test/simpleProductApi.js"
