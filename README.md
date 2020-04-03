@@ -1,4 +1,6 @@
-# @accility/protoc-swagger-plugin
+# .proto to OpenApi Conversion
+
+:warning: This package is still in early days and the interfaces might change back and forth. When stable enough it will be released as v1.0.
 
 Generate [OpenAPI v2 (Swagger)](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md) files from [.proto](https://developers.google.com/protocol-buffers) files.
 

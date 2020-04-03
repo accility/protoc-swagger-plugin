@@ -27,7 +27,7 @@
     "test": "node test/simpleProductApi.js"
   },
   "dependencies": {
-    "@accility/protoc-tools": "^0.9.1",
+    "@accility/protoc-tools": "^0.10.0",
     "google-proto-files": "^2.0.0"
   },
   "devDependencies": {

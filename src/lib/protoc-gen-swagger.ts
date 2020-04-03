@@ -3,10 +3,10 @@ import * as apis from 'google-proto-files';
 import * as path from 'path';
 
 const extension = process.platform === 'win32' ? '.exe' : '';
-export function fromProto(options: ProtocOptions) {
+export function fromProto(options: ProtocOptions) : Promise<void> {
   options.includeDirs.push(path.resolve(apis.getProtoPath(), '..'));
   options.plugin = plugin;
-  protoc(options);
+  return protoc(options);
 }
 
 export const plugin = {
