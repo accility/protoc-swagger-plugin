@@ -1,3 +1,4 @@
-test/generated/*.json
+test/generated/**
+test/*.js
 node_modules
 .vscode

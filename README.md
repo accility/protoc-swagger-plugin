@@ -21,13 +21,17 @@ const swagger = require('@accility/protoc-swagger-plugin');
 const apis = require('google-proto-files');
 const path = require('path');
 
-protoc({
+tools.protoc({
     includeDirs: [
         path.resolve(apis.getProtoPath(), '..'),
-        path.resolve('.')
+        path.resolve('./test/protos')
     ],
     files: ['product.proto'],
-    plugin: swagger.plugin
+    outDir: path.resolve(__dirname, 'generated'),
+    outOptions: [
+        swagger.createSwaggerOptions({ outOptions: 'logtostderr=true' }),
+        tools.generators.js(),
+    ]
 });
 ```
 
@@ -42,7 +46,8 @@ const path = require('path');
 // converting from .proto to OpenApi.
 swagger.fromProto({
     includeDirs: [path.resolve('./test/protos')],
-    files: ['product.proto']
+    files: ['product.proto'],
+    outDir: path.resolve(__dirname, 'generated')
 });
 ```
 

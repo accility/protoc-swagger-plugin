@@ -24,10 +24,10 @@
   "types": "./dist/lib/protoc-gen-swagger.d.ts",
   "scripts": {
     "build": "npx tsc",
-    "test": "node test/simpleProductApi.js"
+    "test": "npx tsc --project test/tsconfig.json && node test/simpleProductApi.js"
   },
   "dependencies": {
-    "@accility/protoc-tools": "^0.10.0",
+    "@accility/protoc-tools": "^0.11.0",
     "google-proto-files": "^2.0.0"
   },
   "devDependencies": {
