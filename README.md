@@ -2,7 +2,7 @@
 
 :warning: This package is still in early days and the interfaces might change back and forth. When stable enough it will be released as v1.0.
 
-Generate [OpenAPI v2 (Swagger)](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md) files from [.proto](https://developers.google.com/protocol-buffers) files.
+Generate [OpenAPI v2 and v3 (Swagger)](https://github.com/OAI/OpenAPI-Specification/blob/master/versions) files from [.proto](https://developers.google.com/protocol-buffers) files.
 
 This package includes the [protoc-gen-swagger plugin](https://github.com/grpc-ecosystem/grpc-gateway/releases) from the [grpc-gateway](https://github.com/grpc-ecosystem/grpc-gateway) project.
 It also makes available the collection of the [google common protos](https://github.com/googleapis/api-common-protos.git).
