@@ -4,7 +4,7 @@
 
 Generate [OpenAPI v2 and v3 (Swagger)](https://github.com/OAI/OpenAPI-Specification/blob/master/versions) files from [.proto](https://developers.google.com/protocol-buffers) files.
 
-This package includes the [protoc-gen-swagger plugin](https://github.com/grpc-ecosystem/grpc-gateway/releases) from the [grpc-gateway](https://github.com/grpc-ecosystem/grpc-gateway) project.
+This package downloads the [protoc-gen-swagger plugin](https://github.com/grpc-ecosystem/grpc-gateway/releases) from the [grpc-gateway](https://github.com/grpc-ecosystem/grpc-gateway) project via [octokit/core](https://github.com/octokit/core.js).
 It also makes available the collection of the [google common protos](https://github.com/googleapis/api-common-protos.git).
 
 ## Installing
@@ -34,16 +34,22 @@ protoc({
 Or with the shorthand protoc-swagger-wrapper
 
 ```javascript
-const swagger = require('@accility/protoc-swagger-plugin');
+const swagger = require('../dist/lib/protoc-gen-swagger');
+const apis = require('google-proto-files');
 const path = require('path');
 
-// The .proto-files from the package google-proto-files is automatically added
-// to the include paths since we always need the REST annotations when
-// converting from .proto to OpenApi.
-swagger.fromProto({
-    includeDirs: [path.resolve('./test/protos')],
-    files: ['product.proto']
+await swagger.fromProto({
+	includeDirs: [
+		// The .proto-files from the package google-proto-files is automatically added
+		// to the include paths since we always need the REST annotations when
+		// converting from .proto to OpenApi.
+		path.resolve(apis.getProtoPath(), '..'),
+		path.resolve('./test/protos')
+	],
+	files: ['product.proto'],
+	outOptions: 'logtostderr=true:' + path.resolve(__dirname, 'generated')
 });
+
 ```
 
 

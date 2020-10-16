@@ -4,13 +4,21 @@ import * as path from 'path';
 
 const extension = process.platform === 'win32' ? '.exe' : '';
 
-export function fromProto(options: ProtocOptions): Promise<void> {
+interface SwaggerOptions extends ProtocOptions {
+	binPath?: string
+}
+
+export function fromProto(options: SwaggerOptions): Promise<void> {
 	options.includeDirs.push(path.resolve(apis.getProtoPath(), '..'));
-	options.plugin = plugin;
+	options.plugin = plugin(options.binPath)
 	return protoc(options);
 }
 
-export const plugin = {
-	name: 'swagger',
-	path: path.resolve(__dirname, '../../native/bin', process.platform, 'protoc-gen-swagger' + extension),
+export function plugin(binPath?: string) {
+	return {
+		name: 'swagger',
+		path: binPath ?? path.join(__dirname, '../..', 'native/bin_current' + extension)
+	}
 }
+
+export * from './installer'
