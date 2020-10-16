@@ -1,3 +1,6 @@
-test/generated/*.json
-node_modules
 .vscode
+bin
+src
+test
+.gitignore
+tsconfig.json
