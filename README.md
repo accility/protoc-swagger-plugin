@@ -1,6 +1,6 @@
-# .proto to OpenApi Conversion
+# Protocol Buffer to OpenApi
 
-⚠️ This package is still in early days and the interfaces might change back and forth. When stable enough it will be released as v1.0.
+**⚠️ This package is still in early days and the interfaces might change back and forth. When stable enough it will be released as v1.0.**
 
 Generate [OpenAPI v2 and v3 (Swagger)](https://github.com/OAI/OpenAPI-Specification/blob/master/versions) files from [.proto](https://developers.google.com/protocol-buffers) files.
 
@@ -9,13 +9,29 @@ It also makes available the collection of the [google common protos](https://git
 
 ## Installing
 
+Installing @accility/protoc-tools with the latest available non-pre-release of grpc-gateway/protoc-gen-openapi.
 ```bash
 npm install -D @accility/protoc-tools
 ```
 
+### Installing a release of the openapi generator
+Settings version of grpc-gateway/protoc-gen-openapi to `v1.15.0`.
+**Only works with `>=1.5.1`!**
+
+```bash
+# PowerShell
+$env:RELEASETAG="v1.15.0"
+npm install -D @accility/protoc-tools
+# CMD
+set RELEASETAG="v1.15.0"
+npm install -D @accility/protoc-tools
+# Unix
+RELEASETAG="v1.15.0" npm install -D @accility/protoc-tools
+```
+
 ## Usage
 
-Basic usage with [@accility/protoc-tools](https://github.com/accility/protoc-tools).
+### Basic usage
 
 ```javascript
 const protoc = require('@accility/protoc-tools');
@@ -33,7 +49,7 @@ protoc({
 });
 ```
 
-With the shorthand protoc-swagger-wrapper
+### The shorthand protoc-swagger-wrapper
 
 ```javascript
 const swagger = require('../dist/lib/protoc-gen-swagger');
@@ -54,7 +70,9 @@ await swagger.fromProto({
 
 ```
 
-Specifying a custom release binary of grpc-gateway
+### Installing a release with the API
+
+**[Make sure you know how to install a release of grpc-gateway/protoc-gen-openapi via npm before continuing!](#installing-a-release-of-the-openapi-generator) Only works with `>=1.5.1`!**
 
 ```javascript
 const swagger = require('../dist/lib/protoc-gen-swagger');
@@ -62,11 +80,11 @@ const apis = require('google-proto-files');
 const path = require('path');
 
 async function main() {
-	let tag = 'v1.0.0'
+	let tag = 'v1.5.1'
 	let release = swagger.getBinPath(tag)
 	
 	if (!release.exists) {
-		swagger.install(await swagger.downloadAsync('v1.0.0'))
+		swagger.install(await swagger.downloadAsync('v1.5.1'))
 		release = swagger.getBinPath(tag)
 	}
 	

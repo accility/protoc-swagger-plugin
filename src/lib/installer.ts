@@ -8,46 +8,46 @@ const octokit = new Octokit()
 /**
  * Gets path to binary.
  * 
- * @param tag Optional release tag.
+ * @param tag Optional release tag. E.g. `v1.15.0`
  */
-export function getBinPath(tag?: string): { exists: boolean, path: string | undefined, exe: boolean | undefined } {
-	let _path = tag ? path.join(__dirname, '../..', `bin/bin${tag}`) : path.join(__dirname, '../..', `bin/bin_current`)
-	let exists = fs.existsSync(_path)
+export function getBinPath(tag?: string): string | undefined {
+	let binpath = tag ? path.join(__dirname, '../..', `bin/bin_${tag}`) : path.join(__dirname, '../..', `bin/bin_current`)
+	let exists = fs.existsSync(binpath)
 
 	if (exists)
-		return { exists, path: _path, exe: false }
+		return binpath
 	else {
-		_path = tag ? path.join(__dirname, '../..', `bin/bin${tag}.exe`) : path.join(__dirname, '../..', `bin/bin_current.exe`)
-		exists = fs.existsSync(_path)
+		binpath = tag ? path.join(__dirname, '../..', `bin/bin_${tag}.exe`) : path.join(__dirname, '../..', `bin/bin_current.exe`)
+		exists = fs.existsSync(binpath)
 
 		if (exists)
-			return { exists, path: _path, exe: true }
+			return binpath
 	}
 
-	return { exists: false, path: undefined, exe: undefined }
+	return undefined
 }
 
 /**
  * Gets path to binary asynchronously.
  * 
- * @param tag Optional release tag.
+ * @param tag Optional release tag. E.g. `v1.15.0`
  */
-export async function getBinPathAsync(tag?: string): Promise<{ exists: boolean, path: string | undefined, exe: boolean | undefined }>
+export async function getBinPathAsync(tag?: string): Promise<string | undefined>
 export async function getBinPathAsync(_tag?: string) {
 	const tag = _tag ?? await getLatestTagAsync()
-	return new Promise<{ exists: boolean, path: string | undefined, exe: boolean | undefined }>(resolve => {
-		let filepath = path.join(__dirname, '../..', `bin/bin${tag}`)
+	return new Promise<string | undefined>(resolve => {
+		let binpath = path.join(__dirname, '../..', `bin/bin_${tag}`)
 
-		fs.access(filepath, (err) => {
+		fs.access(binpath, (err) => {
 			if (err) {
-				filepath = path.join(__dirname, '../..', `bin/bin${tag}.exe`)
-				fs.access(filepath, (err) => {
+				binpath = path.join(__dirname, '../..', `bin/bin_${tag}.exe`)
+				fs.access(binpath, (err) => {
 					if (err)
-						resolve({ exists: false, path: undefined, exe: undefined })
-					resolve({ exists: true, path: filepath, exe: true })
+						resolve(undefined)
+					resolve(binpath)
 				})
 			} else
-				resolve({ exists: true, path: filepath, exe: false })
+				resolve(binpath)
 		})
 	})
 }
@@ -64,19 +64,20 @@ async function getLatestTagAsync() {
 /**
  * Downloads a release binary for the current os using `@octokit/core` asynchronously.
  * 
- * @param tag Optional release tag.
+ * @param tag Optional release tag. E.g. `v1.15.0`
  */
 export async function downloadAsync(tag?: string) {
-	const { data } = tag ?
-		await octokit.request('GET /repos/{owner}/{repo}/releases/tags/{tag}', {
+	const data = tag ?
+		(await octokit.request('GET /repos/{owner}/{repo}/releases/tags/{tag}', {
 			owner: 'grpc-ecosystem',
 			repo: 'grpc-gateway',
 			tag
-		}) :
-		await octokit.request('GET /repos/{owner}/{repo}/releases/latest', {
+		})).data :
+		// Find the latest non-pre-release
+		(await octokit.request('GET /repos/{owner}/{repo}/releases', {
 			owner: 'grpc-ecosystem',
 			repo: 'grpc-gateway'
-		})
+		})).data.find((release: any) => !release.prerelease)
 
 	const release = data
 
@@ -89,21 +90,30 @@ export async function downloadAsync(tag?: string) {
 	else
 		throw new Error('There is no compatible binary for your os.')
 
-	const asset = release.assets.find((asset: any) => new RegExp(`^protoc-gen-openapiv[0-9]-v[0-9\\.]+?-${platform}-x86_64(?:\\.exe|)$`).test(asset.name))
+	if (release.assets.length <= 0)
+		throw new Error('There were no attached assets to the choosen release. You will have to manually download the binaries.')
+
+	const asset = release.assets.find((asset: any) => new RegExp(`^protoc-gen-(?:openapi|swagger).+${platform}-x86_64(?:\.exe$|$)`).test(asset.name))
 
 	if (!asset)
-		throw new Error('There is no compatible download for your os.\nThis should not have happened, contact the software publisher.')
+		throw new Error(`There is no compatible download with release tag '${tag}' for your os.\nThis should not have happened, contact the software publisher.`)
 
 	const bin = Buffer.from((await octokit.request(asset.browser_download_url)).data)
 
 	return new Promise<{ bin: Buffer, tag: string, exe: boolean }>((resolve, reject) => {
 		fs.access(path.join(__dirname, '../../bin'), (err) => {
-			const write = () =>
-				fs.writeFile(path.join(__dirname, '../..', 'bin/bin_current' + (platform === 'windows' ? '.exe' : '')), bin, (err) => {
-					if (err) reject(err)
+			const write = () => {
+				const res = () => resolve({ bin, tag: release.tag_name, exe: platform === 'windows' })
 
-					resolve({ bin, tag: release.tag_name, exe: platform === 'windows' })
-				})
+				if (!tag)
+					// TODO: Write a path to the latest bin file instead of writing it twice.
+					fs.writeFile(path.join(__dirname, '../..', 'bin/bin_current' + (platform === 'windows' ? '.exe' : '')), bin, (err) => {
+						if (err) reject(err)
+						res()
+					})
+				else
+					res()
+			}
 
 			if (err)
 				fs.mkdir(path.join(__dirname, '../../bin'), (err) => {
@@ -139,7 +149,7 @@ export function install(...args: any[]): string {
 	const bin = ('bin' in _bin ? _bin.bin : _bin) ?? ''
 	const exe = ('bin' in _bin ? _bin.exe : _exe) ?? false
 
-	const filename = 'bin/bin' + tag + (exe ? '.exe' : '')
+	const filename = 'bin/bin_' + tag + (exe ? '.exe' : '')
 
 	if (!fs.existsSync(path.join(__dirname, '../../bin')))
 		fs.mkdirSync(path.join(__dirname, '../../bin'))
@@ -172,7 +182,7 @@ export function installAsync(...args: any[]) {
 	const bin = ('bin' in _bin ? _bin.bin : _bin) ?? ''
 	const exe = ('bin' in _bin ? _bin.exe : _exe) ?? false
 
-	const filename = 'bin/bin' + tag + (exe ? '.exe' : '')
+	const filename = 'bin/bin_' + tag + (exe ? '.exe' : '')
 
 	return new Promise<string>((resolve, reject) => {
 
@@ -198,15 +208,18 @@ export function installAsync(...args: any[]) {
 /**
  * Gets path to binary. Same as `getBinPath()` without the tags parameter.
  */
-export function latest() {
+export function latestBin() {
 	return getBinPath()
 }
 
 async function main(tag?: string) {
+	if (tag)
+		console.log(`Installing grpc-gateway protoc-gen-openapi ${tag}...`)
+	else
+		console.log(`Installing the latest grpc-gateway protoc-gen-openapi release...`)
 	install(await downloadAsync(tag))
 }
 
-// If run by node, execute main
+// If run by node cli, execute main
 if (require.main === module)
-	// Pass the second argument as tag to main
-	main(process.argv[2])
+	main(process.env['RELEASETAG'])
