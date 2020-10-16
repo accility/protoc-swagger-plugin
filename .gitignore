@@ -1,4 +1,4 @@
 test/generated/*.json
 node_modules
 dist
-native
+bin

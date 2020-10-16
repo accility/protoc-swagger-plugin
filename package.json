@@ -25,9 +25,9 @@
 	"scripts": {
 		"build": "./node_modules/.bin/tsc --project ./",
 		"dev-build": "./node_modules/.bin/tsc --project ./ --sourceMap",
-		"test": "node test/simpleProductApi.js",
-		"install-native": "node dist/lib/installer.js",
-		"install": "npm run install-native"
+		"test": "node test/simpleProductApi.ts",
+		"install-bin": "node -r ts-node/register dist/lib/installer.js",
+		"install": "npm run install-bin"
 	},
 	"dependencies": {
 		"@accility/protoc-tools": "^0.10.0",
@@ -36,6 +36,7 @@
 	},
 	"devDependencies": {
 		"@types/node": "^13.9.8",
+		"ts-node": "^9.0.0",
 		"typescript": "^3.8.3"
 	}
 }

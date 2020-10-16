@@ -1,6 +1,7 @@
 import { ProtocOptions, protoc } from '@accility/protoc-tools';
 import * as apis from 'google-proto-files';
 import * as path from 'path';
+import { latest as latestBin } from './installer';
 
 const extension = process.platform === 'win32' ? '.exe' : '';
 
@@ -8,16 +9,21 @@ interface SwaggerOptions extends ProtocOptions {
 	binPath?: string
 }
 
-export function fromProto(options: SwaggerOptions): Promise<void> {
+export function fromProto(options: SwaggerOptions) {
 	options.includeDirs.push(path.resolve(apis.getProtoPath(), '..'));
 	options.plugin = plugin(options.binPath)
 	return protoc(options);
 }
 
 export function plugin(binPath?: string) {
+	const latest = latestBin().path
+
+	if (!latest)
+		throw new Error('Latest binary was not found. Install the latest binary or specify a custom binary path.')
+
 	return {
 		name: 'swagger',
-		path: binPath ?? path.join(__dirname, '../..', 'native/bin_current' + extension)
+		path: binPath ?? latest
 	}
 }
 
