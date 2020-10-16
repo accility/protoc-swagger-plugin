@@ -1,6 +1,6 @@
 # .proto to OpenApi Conversion
 
-:warning: This package is still in early days and the interfaces might change back and forth. When stable enough it will be released as v1.0.
+⚠️ This package is still in early days and the interfaces might change back and forth. When stable enough it will be released as v1.0.
 
 Generate [OpenAPI v2 and v3 (Swagger)](https://github.com/OAI/OpenAPI-Specification/blob/master/versions) files from [.proto](https://developers.google.com/protocol-buffers) files.
 
@@ -14,6 +14,8 @@ npm install -D @accility/protoc-tools
 ```
 
 ## Usage
+
+Basic usage with [@accility/protoc-tools](https://github.com/accility/protoc-tools).
 
 ```javascript
 const protoc = require('@accility/protoc-tools');
@@ -31,7 +33,7 @@ protoc({
 });
 ```
 
-Or with the shorthand protoc-swagger-wrapper
+With the shorthand protoc-swagger-wrapper
 
 ```javascript
 const swagger = require('../dist/lib/protoc-gen-swagger');
@@ -52,4 +54,32 @@ await swagger.fromProto({
 
 ```
 
+Specifying a custom release binary of grpc-gateway
 
+```javascript
+const swagger = require('../dist/lib/protoc-gen-swagger');
+const apis = require('google-proto-files');
+const path = require('path');
+
+async function main() {
+	let tag = 'v1.0.0'
+	let release = swagger.getBinPath(tag)
+	
+	if (!release.exists) {
+		swagger.install(await swagger.downloadAsync('v1.0.0'))
+		release = swagger.getBinPath(tag)
+	}
+	
+	swagger.fromProto({
+		includeDirs: [
+			path.resolve(apis.getProtoPath(), '..'),
+			path.resolve('./test/protos')
+		],
+		files: ['product.proto'],
+		outOptions: 'logtostderr=true:' + path.resolve(__dirname, 'generated'),
+		binPath: release.path
+	});
+}
+
+main()
+```
