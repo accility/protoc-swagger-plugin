@@ -23,7 +23,6 @@ export function getBinPath(tag?: string): string | undefined {
 		if (exists)
 			return binpath
 	}
-
 	return undefined
 }
 
