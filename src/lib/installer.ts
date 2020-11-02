@@ -11,7 +11,7 @@ const octokit = new Octokit()
  * @param tag Optional release tag. E.g. `v1.15.0`
  */
 export function getBinPath(tag?: string): string | undefined {
-	let binpath = tag ? path.join(__dirname, '../..', `bin/bin_${tag}`) : path.join(__dirname, '../..', `bin/bin_current`)
+	let binpath = path.join(__dirname, '../../bin/bin_' + tag ?? 'current')
 	let exists = fs.existsSync(binpath)
 
 	if (exists)
