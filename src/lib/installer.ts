@@ -206,7 +206,7 @@ export function installAsync(...args: any[]) {
 }
 
 /**
- * Gets path to binary. Same as `getBinPath()` without the tags parameter.
+ * Returns path to binary. Same as `getBinPath()` without the tags parameter.
  */
 export function latestBin() {
 	return getBinPath()
