@@ -1,37 +1,42 @@
 {
-  "name": "@accility/protoc-swagger-plugin",
-  "version": "0.10.0",
-  "description": "Convert .proto files to OpenAPI v2 (swagger) files.",
-  "keywords": [
-    "protoc",
-    "protobuffer",
-    "REST",
-    "plugin",
-    "swagger",
-    "openapi",
-    "convert"
-  ],
-  "author": "Accility AB",
-  "license": "MIT",
-  "public": true,
-  "repository": {
-    "url": "https://github.com/accility/protoc-swagger-plugin.git"
-  },
-  "engines": {
-    "node": ">=8.0.0"
-  },
-  "main": "./dist/lib/protoc-gen-swagger.js",
-  "types": "./dist/lib/protoc-gen-swagger.d.ts",
-  "scripts": {
-    "build": "npx tsc",
-    "test": "node test/simpleProductApi.js"
-  },
-  "dependencies": {
-    "@accility/protoc-tools": "^0.10.0",
-    "google-proto-files": "^2.0.0"
-  },
-  "devDependencies": {
-    "@types/node": "^13.9.8",
-    "typescript": "^3.8.3"
-  }
+	"name": "@accility/protoc-swagger-plugin",
+	"version": "0.10.0",
+	"description": "Convert .proto files to OpenAPI v2 and v3 (swagger) files.",
+	"keywords": [
+		"protoc",
+		"protobuffer",
+		"REST",
+		"plugin",
+		"swagger",
+		"openapi",
+		"convert"
+	],
+	"author": "Accility AB",
+	"license": "MIT",
+	"public": true,
+	"repository": {
+		"url": "https://github.com/accility/protoc-swagger-plugin.git"
+	},
+	"engines": {
+		"node": ">=8.0.0"
+	},
+	"main": "./dist/lib/protoc-gen-swagger.js",
+	"types": "./dist/lib/protoc-gen-swagger.d.ts",
+	"scripts": {
+		"build": "./node_modules/.bin/tsc --project ./",
+		"dev-build": "./node_modules/.bin/tsc --project ./ --sourceMap",
+		"test": "node test/simpleProductApi.ts",
+		"install-bin": "node -r ts-node/register dist/lib/installer.js",
+		"install": "npm run install-bin"
+	},
+	"dependencies": {
+		"@accility/protoc-tools": "^0.10.0",
+		"@octokit/core": "^3.1.2",
+		"google-proto-files": "^2.0.0"
+	},
+	"devDependencies": {
+		"@types/node": "^13.9.8",
+		"ts-node": "^9.0.0",
+		"typescript": "^3.8.3"
+	}
 }
