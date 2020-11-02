@@ -17,7 +17,7 @@ export function getBinPath(tag?: string): string | undefined {
 	if (exists)
 		return binpath
 	else {
-		binpath = tag ? path.join(__dirname, '../..', `bin/bin_${tag}.exe`) : path.join(__dirname, '../..', `bin/bin_current.exe`)
+		binpath = path.join(__dirname, `../../bin/bin_${tag ?? 'current'}.exe`)
 		exists = fs.existsSync(binpath)
 
 		if (exists)
