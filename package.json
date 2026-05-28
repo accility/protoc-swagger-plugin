@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@accility/protoc-tools": "^0.10.0",
-    "google-proto-files": "^2.0.0"
+    "google-proto-files": "^4.2.0"
   },
   "devDependencies": {
     "@types/node": "^13.9.8",
